@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Register for Mentorship — Sulaymaan O. Abubakr</title>
+
+  <link rel="icon" type="image/png" sizes="32x32" href="./images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="./images/favicon-16x16.png">
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+  <script src="https://js.paystack.co/v1/inline.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav-bar">
+      <a href="index.html#home" class="brand">SOA</a>
+      <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+        <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+      </button>
+      <nav class="site-nav" role="navigation">
+        <ul>
+          <li><a href="index.html#home">Home</a></li>
+          <li><a href="index.html#mentorship">Mentorship</a></li>
+          <li><a href="index.html#courses">Courses</a></li>
+          <li><a href="index.html#contact" class="btn btn-secondary nav-cta">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <section class="section section-alt">
+    <div class="container narrow">
+      <h1 class="section-title">Mentorship Registration</h1>
+      <p class="section-sub">Apply, pay, and receive a welcome email instantly.</p>
+
+      <form id="mentorshipRegisterForm" class="enroll-form">
+        <div class="grid two-col">
+          <div>
+            <label class="form-label">Full Name</label>
+            <input class="form-input" type="text" name="name" required>
+          </div>
+          <div>
+            <label class="form-label">Email</label>
+            <input class="form-input" type="email" name="email" required>
+          </div>
+          <div>
+            <label class="form-label">WhatsApp Number</label>
+            <input class="form-input" type="tel" name="phone" placeholder="e.g. 23480XXXXXXX" required>
+          </div>
+          <div>
+            <label class="form-label">Mentorship Track</label>
+            <select class="form-input" id="mr_track" required>
+              <option value="">Select a track…</option>
+              <option value="Career Mentorship">Career Mentorship</option>
+              <option value="Business Mentorship">Business Mentorship</option>
+              <option value="IT Mentorship">IT Mentorship</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="form-label">What’s your goal?</label>
+          <textarea class="form-input" id="mr_goal" rows="5" placeholder="Tell me where you are and where you want to be" required></textarea>
+        </div>
+
+        <div class="grid two-col">
+          <div>
+            <label class="form-label">Preferred Start</label>
+            <input class="form-input" type="date" id="mr_start">
+          </div>
+          <div>
+            <label class="form-label">Duration (weeks)</label>
+            <input class="form-input" type="number" min="1" max="52" id="mr_duration" placeholder="e.g. 8">
+          </div>
+        </div>
+
+        <!-- Payment plan (mentorship) -->
+        <div class="plan-row" id="mr_plan_row" hidden>
+            <span class="form-label">Payment Plan</span>
+        <div class="plan-options">
+            <label><input type="radio" name="mr_plan" id="mr_plan_full" value="full" checked> Pay in Full</label>
+            <label><input type="radio" name="mr_plan" id="mr_plan_inst" value="installment"> Installment</label>
+          </div>
+        </div>
+
+        <!-- Installment (mentorship) -->
+        <div id="installment-options-mentor" class="installment" hidden>
+            <label class="form-label">Installment Months</label>
+            <input class="form-input" type="number" id="mr_months" min="2" max="12" step="1" placeholder="e.g. 3" />
+            <p id="mr_installment_breakdown" class="fine-print"></p>
+        </div>
+
+
+        <div class="enroll-summary">
+          <span class="price-label">Price:</span>
+          <strong class="price-value" id="mr_price_display">—</strong>
+        </div>
+
+        <div class="cta-inline" style="margin-top:1rem;">
+          <button type="submit" class="btn btn-primary btn-lg">Pay & Apply</button>
+        </div>
+
+        <p class="fine-print">Payments are processed by Paystack. WhatsApp opens after successful payment.</p>
+      </form>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-bottom">
+        <p>© <span id="year"></span> Sulaymaan O. Abubakr. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="register.js" defer></script>
+</body>
+</html>

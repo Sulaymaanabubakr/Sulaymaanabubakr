@@ -1,0 +1,159 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Projects | Sulaymaan O. Abubakr</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="./images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="./images/favicon-16x16.png">
+  <link rel="stylesheet" href="style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav-bar">
+      <a href="index.html#home" class="brand">SOA</a>
+      <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+        <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+      </button>
+      <nav class="site-nav" role="navigation" aria-label="Primary">
+        <ul>
+          <li><a href="index.html#home">Home</a></li>
+          <li><a href="index.html#services">Services</a></li>
+          <li><a href="index.html#courses">Courses</a></li>
+          <li><a href="index.html#mentorship">Mentorship</a></li>
+          <li><a href="index.html#contact" class="btn btn-secondary nav-cta">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <section class="section section-alt">
+    <div class="container reveal">
+      <h1 class="section-title">Web Projects</h1>
+      <p class="section-sub">A curated set of websites shipped for e-commerce, corporate, education, NGOs, and startups.</p>
+
+      <!-- Filters -->
+      <div class="portfolio-filters">
+        <button class="pill active" data-filter="All">All</button>
+        <button class="pill" data-filter="E-commerce">E-commerce</button>
+        <button class="pill" data-filter="Corporate">Corporate</button>
+        <button class="pill" data-filter="SaaS">SaaS</button>
+        <button class="pill" data-filter="Education">Education</button>
+        <button class="pill" data-filter="NGO">NGO</button>
+        <button class="pill" data-filter="Startup">Startup</button>
+      </div>
+
+      <!-- Grid -->
+      <div id="portfolioGrid" class="project-grid">
+        <!-- Duplicate/modify these cards as needed -->
+        <article class="project-card" data-category="Real Estate">
+        <a class="project-link" href="https://askariotcity.com/" target="_blank" rel="noopener">
+          <div class="project-thumb">
+            <img src="images/projects/askariot.png" alt="Real Estate Company" loading="lazy">
+          </div>
+          <div class="project-body">
+            <h3 class="project-title">Askariot City</h3>
+            <p class="project-meta">Real Estate &bull; WordPress Website</p>
+          </div>
+        </a>
+      </article>
+
+      <article class="project-card" data-category="Fashion Brand">
+        <a class="project-link" href="https://royalstylesolutions.netlify.app/" target="_blank" rel="noopener">
+          <div class="project-thumb">
+            <img src="images/projects/royalstyle.png" alt="Fashion Brand" loading="lazy">
+          </div>
+          <div class="project-body">
+            <h3 class="project-title">Royal Style Solutions</h3>
+            <p class="project-meta">Fashion Brand &bull; Service Booking Site</p>
+          </div>
+        </a>
+      </article>
+
+        <article class="project-card" data-category="Professional Services">
+        <a class="project-link" href="https://roodiyahwrites.netlify.app/" target="_blank" rel="noopener">
+          <div class="project-thumb">
+            <img src="images/projects/roodiyah.png" alt="Ghostwriting" loading="lazy">
+          </div>
+          <div class="project-body">
+            <h3 class="project-title">Roodiyah Writes</h3>
+            <p class="project-meta">Professional Services &bull; Copywriting Portfolio</p>
+          </div>
+        </a>
+      </article>
+
+      <article class="project-card" data-category="Kids Education">
+        <a class="project-link" href="https://kidsnurturer.netlify.app/" target="_blank" rel="noopener">
+          <div class="project-thumb">
+            <img src="images/projects/kidsnurturer.png" alt="Kids Education" loading="lazy">
+          </div>
+          <div class="project-body">
+            <h3 class="project-title">Kids Nurturer</h3>
+            <p class="project-meta">Kids Education &bull; Educational Resources</p>
+          </div>
+        </a>
+      </article>
+
+      <article class="project-card" data-category="Islamic Education">
+        <a class="project-link" href="https://atonac.netlify.app/" target="_blank" rel="noopener">
+          <div class="project-thumb">
+            <img src="images/projects/atonac.png" alt="Islamic Education" loading="lazy">
+          </div>
+          <div class="project-body">
+            <h3 class="project-title">ATONAC Institute</h3>
+            <p class="project-meta">Islamic Education &bull; Learn Islam</p>
+          </div>
+        </a>
+      </article>
+
+      <article class="project-card" data-category="Travel">
+        <a class="project-link" href="https://travel-hotline.com/" target="_blank" rel="noopener">
+          <div class="project-thumb">
+            <img src="images/projects/travel.png" alt="Travel Agency" loading="lazy">
+          </div>
+          <div class="project-body">
+            <h3 class="project-title">Travel Hotline</h3>
+            <p class="project-meta">Travel &bull; Travel Agency</p>
+          </div>
+        </a>
+      </article>
+
+        <article class="project-card" data-category="Mental Wellbeing Application">
+        <a class="project-link" href="https://circlesapp.netlify.app/" target="_blank" rel="noopener">
+          <div class="project-thumb">
+            <img src="images/projects/empylo.jpg" alt="Mental Wellbeing" loading="lazy">
+          </div>
+          <div class="project-body">
+            <h3 class="project-title">Empylo</h3>
+            <p class="project-meta">Mental Wellbeing &bull; Next.js Web App</p>
+          </div>
+        </a>
+      </article>
+
+        <article class="project-card" data-category="Freelance Website">
+        <a class="project-link" href="https://flexiremote.netlify.app/" target="_blank" rel="noopener">
+          <div class="project-thumb">
+            <img src="images/projects/flexgig.jpg" alt="Freelance Website" loading="lazy">
+          </div>
+          <div class="project-body">
+            <h3 class="project-title">FlexGig</h3>
+            <p class="project-meta">Freelance Marketplace &bull; Waitlist Landing</p>
+          </div>
+        </a>
+      </article>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-bottom">
+        <p>© <span id="year"></span> Sulaymaan O. Abubakr. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js" defer></script>
+</body>
+</html>
