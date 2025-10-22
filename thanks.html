@@ -1,48 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Thank You — Sulaymaan O. Abubakr</title>
-
-  <link rel="icon" type="image/png" sizes="32x32" href="./images/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="./images/favicon-16x16.png">
-  <link rel="stylesheet" href="style.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Thank You | Sulaymaan O. Abubakr</title>
+  <meta name="description" content="Thank you for registering with Sulaymaan O. Abubakr. Explore more opportunities or return to the homepage.">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Georgia:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <link rel="stylesheet" href="style.css">
 </head>
-<body>
-
-  <header class="site-header">
-    <div class="container nav-bar">
-      <a href="index.html#home" class="brand">SOA</a>
-    </div>
-  </header>
-
-  <section class="section section-alt thankyou">
-    <div class="container narrow">
-      <div class="thx-badge">
-        <i class="fa-solid fa-check"></i>
+<body class="theme-blue">
+  <main class="section" style="min-height:80vh;display:flex;align-items:center;">
+    <div class="container narrow" style="text-align:center;">
+      <div class="glass-card reveal" data-3d style="padding:3rem 2.4rem;">
+        <div style="display:flex;justify-content:center;margin-bottom:1.5rem;">
+          <div style="width:120px;height:120px;border-radius:50%;background:rgba(0,35,102,0.85);display:grid;place-items:center;box-shadow:0 30px 60px rgba(0,35,102,0.35);transform-style:preserve-3d;animation:thanksSpin 6s infinite ease-in-out;">
+            <i class="fa-solid fa-check" style="font-size:3rem;color:#fff;"></i>
+          </div>
+        </div>
+        <h1 class="section-title" style="text-align:center;">Thank You!</h1>
+        <p class="section-sub" style="text-align:center;">Your registration was successful. A confirmation email and WhatsApp message will be with you shortly.</p>
+        <a href="/index.html" class="btn btn-primary" style="margin-top:2rem;">Back to Home</a>
       </div>
-
-      <h1 class="section-title">Thank You!</h1>
-      <p class="section-sub">
-        Your registration was successful.  
-        You’ll receive a confirmation email shortly, and we’ll contact you on WhatsApp to get you started.
-      </p>
-
-      <a class="btn btn-primary" href="index.html">Back to Home</a>
     </div>
-  </section>
-
-  <footer class="site-footer">
-    <div class="container footer-bottom">
-      <p>© <span id="year"></span> Sulaymaan O. Abubakr. All rights reserved.</p>
-    </div>
-  </footer>
+  </main>
 
   <script>
-    document.getElementById('year').textContent = new Date().getFullYear();
+    const card = document.querySelector('[data-3d]');
+    const icon = card?.querySelector('div > div');
+    card?.addEventListener('pointermove', (event) => {
+      const rect = card.getBoundingClientRect();
+      const relX = (event.clientX - rect.left) / rect.width - 0.5;
+      const relY = (event.clientY - rect.top) / rect.height - 0.5;
+      icon.style.transform = `rotateY(${relX * 24}deg) rotateX(${relY * -24}deg)`;
+    });
+    card?.addEventListener('pointerleave', () => {
+      icon.style.transform = 'rotateY(0) rotateX(0)';
+    });
   </script>
 </body>
 </html>
