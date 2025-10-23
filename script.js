@@ -1,314 +1,294 @@
-(function () {
-  const $ = (sel, ctx = document) => ctx.querySelector(sel);
-  const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
+const body = document.body;
 
-  const body = document.body;
-  const header = $('.site-header');
-  const nav = $('.site-nav');
-  const navToggle = $('.nav-toggle');
-  const navOverlay = $('.nav-overlay');
+const select = (selector, scope = document) => scope.querySelector(selector);
+const selectAll = (selector, scope = document) => Array.from(scope.querySelectorAll(selector));
 
-  /* ====== Navigation ====== */
-  const closeMenu = () => {
-    nav?.classList.remove('open');
-    body.classList.remove('menu-open');
-    navOverlay?.classList.remove('visible');
-    navToggle?.setAttribute('aria-expanded', 'false');
-  };
-
-  const openMenu = () => {
-    nav?.classList.add('open');
-    body.classList.add('menu-open');
-    navOverlay?.classList.add('visible');
-    navToggle?.setAttribute('aria-expanded', 'true');
-  };
-
-  navToggle?.addEventListener('click', (event) => {
-    event.stopPropagation();
-    nav?.classList.contains('open') ? closeMenu() : openMenu();
+// Mobile navigation
+const navToggle = select('.nav__toggle');
+const navList = select('.nav__list');
+if (navToggle && navList) {
+  navToggle.addEventListener('click', () => {
+    const isOpen = navList.classList.toggle('active');
+    navToggle.setAttribute('aria-expanded', String(isOpen));
+    navToggle.classList.toggle('open', isOpen);
   });
 
-  navOverlay?.addEventListener('click', closeMenu);
+  selectAll('.nav__link', navList).forEach((link) => {
+    link.addEventListener('click', () => {
+      navList.classList.remove('active');
+      navToggle.setAttribute('aria-expanded', 'false');
+      navToggle.classList.remove('open');
+    });
+  });
+}
 
-  document.addEventListener('click', (event) => {
-    if (!nav?.classList.contains('open')) return;
-    if (!nav.contains(event.target) && !navToggle.contains(event.target)) {
-      closeMenu();
+// Sticky header shadow
+const header = select('.header');
+const toggleHeaderShadow = () => {
+  if (!header) return;
+  header.classList.toggle('scrolled', window.scrollY > 40);
+};
+window.addEventListener('scroll', toggleHeaderShadow);
+toggleHeaderShadow();
+
+// Smooth scroll for internal links
+const internalLinks = selectAll('a[href^="#"]:not([href="#"])');
+internalLinks.forEach((link) => {
+  link.addEventListener('click', (event) => {
+    const targetId = link.getAttribute('href');
+    if (!targetId || targetId === '#') return;
+    const target = select(targetId);
+    if (target) {
+      event.preventDefault();
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   });
+});
 
-  $$('.site-nav a').forEach((link) =>
-    link.addEventListener('click', () => {
-      if (nav?.classList.contains('open')) closeMenu();
-    })
-  );
-
-  const setActiveNavLink = () => {
-    const sections = $$('main section[id]');
-    const scrollPos = window.scrollY + header.offsetHeight + 60;
-    sections.forEach((section) => {
-      const link = $(`.site-nav a[href="#${section.id}"]`);
-      if (!link) return;
-      const { top, height } = section.getBoundingClientRect();
-      const sectionTop = window.scrollY + top;
-      if (scrollPos >= sectionTop && scrollPos < sectionTop + height) {
-        link.classList.add('active');
-      } else {
-        link.classList.remove('active');
-      }
-    });
-  };
-
-  window.addEventListener('scroll', () => {
-    if (window.scrollY > 8) header?.classList.add('scrolled');
-    else header?.classList.remove('scrolled');
-    setActiveNavLink();
-  });
-  setActiveNavLink();
-
-  /* ====== Smooth scroll for anchor links ====== */
-  $$('a[href^="#"]').forEach((anchor) => {
-    anchor.addEventListener('click', (event) => {
-      const targetID = anchor.getAttribute('href');
-      if (!targetID || targetID === '#') return;
-      const target = document.querySelector(targetID);
-      if (!target) return;
-      event.preventDefault();
-      const offsetTop = target.getBoundingClientRect().top + window.scrollY - header.offsetHeight + 4;
-      window.scrollTo({ top: offsetTop, behavior: 'smooth' });
-    });
-  });
-
-  /* ====== Hero parallax ====== */
-  const hero = $('.section-hero');
-  const heroElements = $$('[data-3d]', hero);
-  hero?.addEventListener('pointermove', (event) => {
-    const rect = hero.getBoundingClientRect();
-    const relX = (event.clientX - rect.left) / rect.width - 0.5;
-    const relY = (event.clientY - rect.top) / rect.height - 0.5;
-    heroElements.forEach((el, index) => {
-      const depth = (index + 1) * 10;
-      el.style.transform = `translate3d(${relX * depth}px, ${relY * depth}px, ${depth * 2}px)`;
-    });
-  });
-
-  hero?.addEventListener('pointerleave', () => {
-    heroElements.forEach((el) => {
-      el.style.transform = 'translate3d(0,0,0)';
-    });
-  });
-
-  /* ====== Intersection reveal ====== */
-  const revealObserver = new IntersectionObserver(
-    (entries) => {
+// Intersection Observer for reveals
+const revealElements = selectAll('.reveal');
+if (revealElements.length) {
+  const observer = new IntersectionObserver(
+    (entries, obs) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          entry.target.classList.add('in-view');
-          revealObserver.unobserve(entry.target);
+          entry.target.classList.add('visible');
+          obs.unobserve(entry.target);
         }
       });
     },
-    { threshold: 0.18 }
+    {
+      threshold: 0.2,
+      rootMargin: '0px 0px -60px 0px',
+    }
   );
-  $$('.reveal').forEach((el) => revealObserver.observe(el));
 
-  /* ====== Vanilla Tilt ====== */
-  if (window.VanillaTilt) {
-    VanillaTilt.init($$('.tilt'), {
-      max: 10,
-      speed: 400,
-      glare: true,
-      'max-glare': 0.25,
-      perspective: 1200,
-      gyroscope: true,
+  revealElements.forEach((el) => observer.observe(el));
+}
+
+// Hero parallax
+const hero = select('.hero');
+const parallaxItems = selectAll('[data-depth]', hero);
+if (hero && parallaxItems.length) {
+  let bounds = hero.getBoundingClientRect();
+  let mouseX = bounds.width / 2;
+  let mouseY = bounds.height / 2;
+  let rafId = null;
+
+  const updateParallax = () => {
+    parallaxItems.forEach((item) => {
+      const depth = parseFloat(item.dataset.depth || '0');
+      const moveX = ((mouseX - bounds.width / 2) / bounds.width) * depth * -40;
+      const moveY = ((mouseY - bounds.height / 2) / bounds.height) * depth * -30;
+      item.style.transform = `translate3d(${moveX}px, ${moveY}px, 0)`;
     });
-  }
-
-  /* ====== GSAP hero entrance ====== */
-  if (window.gsap) {
-    gsap.from('.hero-copy .display-line', {
-      yPercent: 80,
-      opacity: 0,
-      duration: 1,
-      stagger: 0.12,
-      ease: 'power3.out',
-    });
-    gsap.from('.hero-copy .subtitle, .hero-copy .bio, .hero-actions', {
-      y: 30,
-      opacity: 0,
-      duration: 0.9,
-      delay: 0.4,
-      ease: 'power2.out',
-      stagger: 0.1,
-    });
-    gsap.from('.hero-portrait', {
-      y: 50,
-      opacity: 0,
-      duration: 1.1,
-      delay: 0.5,
-      ease: 'power3.out',
-    });
-  }
-
-  /* ====== Projects filter ====== */
-  const filterButtons = $$('.project-filters .pill');
-  const projectGrid = $('#projectGrid');
-  let activeFilter = 'all';
-  if (filterButtons.length && projectGrid && window.gsap?.Flip) {
-    filterButtons.forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const filter = btn.dataset.filter || 'all';
-        if (filter === activeFilter) return;
-        activeFilter = filter;
-        filterButtons.forEach((item) => item.classList.remove('active'));
-        btn.classList.add('active');
-
-        const state = Flip.getState($$('.project-card', projectGrid));
-
-        $$('.project-card', projectGrid).forEach((card) => {
-          const match = filter === 'all' || card.dataset.category === filter;
-          card.dataset.hidden = match ? 'false' : 'true';
-          card.style.display = match ? '' : 'none';
-        });
-
-        Flip.from(state, {
-          absolute: true,
-          duration: 0.6,
-          ease: 'power2.inOut',
-          stagger: 0.05,
-        });
-      });
-    });
-  }
-
-  /* ====== Courses buttons ====== */
-  $$('.course-card button[data-link]').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const href = btn.dataset.link;
-      if (href) window.location.href = href;
-    });
-  });
-
-  /* ====== Accordion ====== */
-  $$('.accordion-trigger').forEach((trigger) => {
-    trigger.addEventListener('click', () => {
-      const item = trigger.closest('.accordion-item');
-      const open = item.classList.toggle('open');
-      trigger.setAttribute('aria-expanded', String(open));
-    });
-  });
-
-  /* ====== Certificates lightbox ====== */
-  const lightbox = $('#lightbox');
-  const lightboxImg = $('#lightboxImg');
-  const lightboxClose = $('.lightbox-close');
-  const openLightbox = (src, alt) => {
-    lightboxImg.src = src;
-    lightboxImg.alt = alt;
-    lightbox.classList.add('open');
-    lightbox.setAttribute('aria-hidden', 'false');
-    document.body.style.overflow = 'hidden';
-  };
-  const closeLightbox = () => {
-    lightbox.classList.remove('open');
-    lightbox.setAttribute('aria-hidden', 'true');
-    document.body.style.overflow = '';
+    rafId = null;
   };
 
-  $$('.cert-card').forEach((card) => {
-    card.addEventListener('click', () => {
-      const img = $('img', card);
-      if (!img) return;
-      openLightbox(img.src, img.alt);
-    });
-    card.addEventListener('keypress', (event) => {
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        const img = $('img', card);
-        if (!img) return;
-        openLightbox(img.src, img.alt);
-      }
-    });
-  });
-
-  lightboxClose?.addEventListener('click', closeLightbox);
-  lightbox?.addEventListener('click', (event) => {
-    if (event.target === lightbox) closeLightbox();
-  });
-  document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape' && lightbox?.classList.contains('open')) {
-      closeLightbox();
+  hero.addEventListener('mousemove', (event) => {
+    const rect = hero.getBoundingClientRect();
+    mouseX = event.clientX - rect.left;
+    mouseY = event.clientY - rect.top;
+    if (!rafId) {
+      rafId = requestAnimationFrame(updateParallax);
     }
   });
 
-  /* ====== Back to top ====== */
-  const backToTop = $('#backToTop');
-  const toggleBackToTop = () => {
-    if (!backToTop) return;
-    if (window.scrollY > 500) backToTop.classList.add('fab-visible');
-    else backToTop.classList.remove('fab-visible');
-  };
-  window.addEventListener('scroll', toggleBackToTop);
-  toggleBackToTop();
-
-  backToTop?.addEventListener('click', (event) => {
-    event.preventDefault();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+  hero.addEventListener('mouseleave', () => {
+    mouseX = bounds.width / 2;
+    mouseY = bounds.height / 2;
+    if (!rafId) {
+      rafId = requestAnimationFrame(updateParallax);
+    }
   });
 
-  /* ====== Newsletter ====== */
-  const newsletterForm = $('#newsletterForm');
-  if (newsletterForm) {
-    const message = $('#newsletterMessage');
-    newsletterForm.addEventListener('submit', async (event) => {
-      event.preventDefault();
-      const endpoint = newsletterForm.dataset.endpoint;
-      const formData = new FormData(newsletterForm);
-      try {
-        const response = await fetch(endpoint, {
-          method: 'POST',
-          body: formData,
-          headers: { Accept: 'application/json' },
-        });
-        if (response.ok) {
-          message.style.display = 'block';
-          newsletterForm.reset();
-        } else {
-          const data = await response.json().catch(() => null);
-          const errMsg = data?.errors?.map((err) => err.message).join(' ') || 'Please try again.';
-          alert(errMsg);
+  window.addEventListener('resize', () => {
+    bounds = hero.getBoundingClientRect();
+    mouseX = bounds.width / 2;
+    mouseY = bounds.height / 2;
+    if (!rafId) {
+      rafId = requestAnimationFrame(updateParallax);
+    }
+  });
+}
+
+// Hover tilt effect
+const tiltElements = selectAll('[data-tilt]');
+if (tiltElements.length) {
+  const maxTilt = 8;
+
+  tiltElements.forEach((el) => {
+    const handleMove = (event) => {
+      const rect = el.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      const rotateX = ((y - centerY) / centerY) * -maxTilt;
+      const rotateY = ((x - centerX) / centerX) * maxTilt;
+      el.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+      el.classList.add('hovered');
+    };
+
+    const resetTilt = () => {
+      el.style.transform = 'perspective(800px) rotateX(0deg) rotateY(0deg)';
+      el.classList.remove('hovered');
+    };
+
+    el.addEventListener('mousemove', handleMove);
+    el.addEventListener('mouseleave', resetTilt);
+    el.addEventListener('touchstart', () => el.classList.add('hovered'));
+    el.addEventListener('touchend', resetTilt);
+  });
+}
+
+// Back to top button
+const backToTop = select('.back-to-top');
+const toggleBackToTop = () => {
+  if (!backToTop) return;
+  if (window.scrollY > 400) {
+    backToTop.classList.add('visible');
+  } else {
+    backToTop.classList.remove('visible');
+  }
+};
+window.addEventListener('scroll', toggleBackToTop);
+toggleBackToTop();
+
+if (backToTop) {
+  backToTop.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+}
+
+// Newsletter form success simulation
+const newsletterForm = select('.newsletter-form');
+const newsletterSuccess = select('.newsletter-success');
+if (newsletterForm && newsletterSuccess) {
+  newsletterForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    newsletterSuccess.classList.add('visible');
+    setTimeout(() => {
+      newsletterSuccess.classList.remove('visible');
+    }, 4000);
+  });
+}
+
+// Contact form success toast
+const contactForm = select('.contact-form');
+if (contactForm) {
+  contactForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const toast = document.createElement('div');
+    toast.className = 'toast-success';
+    toast.textContent = 'Message received! I will reach out shortly.';
+    body.appendChild(toast);
+    requestAnimationFrame(() => {
+      toast.classList.add('visible');
+    });
+    setTimeout(() => {
+      toast.classList.remove('visible');
+      setTimeout(() => toast.remove(), 400);
+    }, 4200);
+  });
+}
+
+// WhatsApp FAB focus ripple (optional animation trigger)
+const whatsappFab = select('.whatsapp-fab');
+if (whatsappFab) {
+  whatsappFab.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      whatsappFab.click();
+    }
+  });
+}
+
+// Lightbox for certifications
+const lightbox = select('.lightbox');
+const lightboxContent = select('.lightbox__content');
+const lightboxClose = select('.lightbox__close');
+if (lightbox && lightboxContent && lightboxClose) {
+  const openLightbox = (img) => {
+    const clone = img.cloneNode(true);
+    lightboxContent.innerHTML = '';
+    lightboxContent.appendChild(clone);
+    lightbox.classList.add('open');
+    lightbox.setAttribute('aria-hidden', 'false');
+    lightboxClose.focus({ preventScroll: true });
+  };
+
+  const closeLightbox = () => {
+    lightbox.classList.remove('open');
+    lightbox.setAttribute('aria-hidden', 'true');
+  };
+
+  selectAll('.cert-card').forEach((card) => {
+    card.addEventListener('click', () => {
+      const img = select('img', card);
+      if (img) {
+        openLightbox(img);
+      }
+    });
+    card.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        const img = select('img', card);
+        if (img) {
+          openLightbox(img);
         }
-      } catch (error) {
-        console.error(error);
-        alert('Network error – please try again later.');
       }
     });
-  }
+    card.setAttribute('tabindex', '0');
+    card.setAttribute('role', 'button');
+    card.setAttribute('aria-label', `${card.querySelector('h3').textContent} certificate preview`);
+  });
 
-  /* ====== Contact form (Netlify) ====== */
-  const contactForm = $('.contact-form');
-  if (contactForm) {
-    const successMessage = $('.form-success', contactForm);
-    contactForm.addEventListener('submit', async (event) => {
-      event.preventDefault();
-      const formData = new FormData(contactForm);
-      const encoded = new URLSearchParams(formData).toString();
-      try {
-        await fetch('/', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: encoded,
-        });
-        contactForm.reset();
-        successMessage.style.display = 'block';
-        setTimeout(() => (successMessage.style.display = 'none'), 5000);
-      } catch (error) {
-        alert('Something went wrong. Please email hello@sulaymaanabubakr.name.ng');
-      }
-    });
-  }
+  lightboxClose.addEventListener('click', closeLightbox);
+  lightbox.addEventListener('click', (event) => {
+    if (event.target === lightbox) {
+      closeLightbox();
+    }
+  });
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && lightbox.classList.contains('open')) {
+      closeLightbox();
+    }
+  });
+}
 
-  /* ====== Footer year ====== */
-  const yearEl = $('#year');
-  if (yearEl) yearEl.textContent = new Date().getFullYear();
-})();
+// Backdrop toast styling injection
+const toastStyle = document.createElement('style');
+toastStyle.innerHTML = `
+.toast-success {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translate3d(-50%, 120%, 0);
+  padding: 1rem 1.6rem;
+  border-radius: 18px;
+  background: linear-gradient(120deg, rgba(0, 35, 102, 0.92), rgba(0, 35, 102, 0.65));
+  color: #fff;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  box-shadow: 0 26px 60px rgba(0, 35, 102, 0.3);
+  z-index: 999;
+  transition: transform 320ms cubic-bezier(0.23, 1, 0.32, 1), opacity 320ms cubic-bezier(0.23, 1, 0.32, 1);
+  opacity: 0;
+}
+.toast-success.visible {
+  transform: translate3d(-50%, 0, 0);
+  opacity: 1;
+}
+`;
+document.head.appendChild(toastStyle);
+
+// FAQ subtle hover tilt removal for keyboard focus
+selectAll('.faq details').forEach((detail) => {
+  detail.addEventListener('toggle', () => {
+    if (detail.open) {
+      detail.classList.add('open');
+    } else {
+      detail.classList.remove('open');
+    }
+  });
+});
